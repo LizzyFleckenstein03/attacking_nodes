@@ -8,11 +8,12 @@ function attacknode:update_node()
 	self.description = def and minetest.strip_colors(def.description or ""):split("\n")[1] or self.node.name
 	self.hp_max = math.floor((def and def._mcl_hardness or 1) * 15)
 	self.object:set_hp(self.hp_max)
-	self.object:set_properties{nametag = self.description}
+	self.object:set_properties{nametag = self.description, hp_max = self.hp_max}
 end
 
 function attacknode:set_node(node, meta)
 	fnode.set_node(self, node, meta)
+
 	self:update_node()
 end
 
@@ -21,12 +22,13 @@ function attacknode:on_activate(staticdata)
 
 	self.object:set_armor_groups({fleshy = 100})
 	self.object:set_acceleration({x = 0, y = 0, z = 0})
+
 	self:update_node()
 end
 
 function attacknode:on_step(dtime)
 	self.health = self.object:get_hp()
-	mcl_bossbars.update_boss(self, self.description, "yellow")
+	mcl_bossbars.update_boss(self.object, self.description, "yellow")
 	local pos = self.object:get_pos()
 
 	if not self.attack_timer then
